@@ -2,6 +2,9 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
+// IMPORT DATABASE CONNECTION
+import dbConnect from "./config/mongo";
+
 // ROUTING IMPORT
 import { router } from "./routes";
 
@@ -24,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 // ROUTING USE
 app.use(router);
 
+// USE DATABASE CONNECTION
+dbConnect();
 
 // SERVER LISTENING
 app.listen(PORT, () => console.log(`Listen on PORT: ${PORT}`))
