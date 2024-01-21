@@ -1,0 +1,29 @@
+# Node.js
+node_modules/
+
+# Build files
+dist/
+build/
+
+# Environment variables
+.env
+
+# Dependency lock files
+package-lock.json
+yarn.lock
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.iml
+
+# Generated files
+*.log
+*.pid
+*.lock
+
+# Configuration files
+.babelrc
+
+# Storage files
+storage/*
