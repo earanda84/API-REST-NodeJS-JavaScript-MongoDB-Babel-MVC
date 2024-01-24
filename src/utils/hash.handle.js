@@ -6,9 +6,11 @@ const encryptPassword = async (password) => {
     return await hash(password, salt);
 }
 
-const comparePassword = async(password, hashPassword) => {
+const comparePassword = async (password, hashPassword) => {
+    const verify = await compare(password, hashPassword);
 
-    return await compare(password, hashPassword);
+console.log(verify)
+    return verify
 }
 
 

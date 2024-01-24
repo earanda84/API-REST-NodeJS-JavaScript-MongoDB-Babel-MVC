@@ -12,7 +12,7 @@ const dbConnect = async () => {
 
         setTimeout(() => {
             console.log("DB CONNECTED!")
-        }, 3000);
+        }, 2000);
 
     } catch (error) {
         console.log(error)

@@ -9,49 +9,63 @@ import {
 
 // GET ALL USERS FROM DATABASE
 const getAllUsers = async () => {
-
-    return await UserModel.find({}).sort({ name: 1 });
+    try {
+        return await UserModel.find({}).sort({ name: 1 });
+    } catch (error) {
+        return error.message
+    }
 }
 
 // GET ONE USER
 const getOneUser = async (id) => {
-
-    return await UserModel.findOne({ _id: id });
+    try {
+        return await UserModel.findOne({ _id: id });
+    } catch (error) {
+        return error.message
+    }
 }
 
 // CREATE NEW USER
-const createNewUser = async (user, password) => {
+const createNewUser = async (user) => {
 
-    // HASH PASSWORD
-    const hashPassword = await encryptPassword(password);
+    try {
+        // CHECK IF USER EXISTS
+        const checkUserInDb = await UserModel.findOne({ email: user.email });
 
-    const newUser = await UserModel.create({ ...user, password: hashPassword });
+        if (checkUserInDb) return "USER_ALREADY_EXISTS";
 
-    return newUser;
+        // HASH PASSWORD
+        const hashPassword = await encryptPassword(user.password);
+
+        const newUser = await UserModel.create({ ...user, password: hashPassword });
+
+        return newUser;
+    } catch (error) {
+        return error.message;
+    }
 };
 
 // UPDATE USER
 const updateOneUser = async (reqBody, idUser) => {
 
     try {
-        // VALIDATE IF USER EXISTS
-        const userExists = await UserModel.findById(idUser);
+        // UPDATE WITH QUERY TO DATABASE
+        const checkUserAndUpdate = await UserModel.findOneAndUpdate({ _id: idUser }, reqBody, { new: true });
 
-        // USER NOT FOUND
-        if(reqBody.password && userExists){
-            const verifyPassword = await comparePassword(reqBody.password, userExists.password)
-
-            if(verifyPassword) userExists.password = userExists.password
-        }
-
-        if(reqBody.password){
-
-        }
-
-        return userExists;
+        return checkUserAndUpdate;
     } catch (error) {
-        console.log(error)
         return error.message
+    }
+}
+
+// DELETED USER
+const deleteOneUser = async(idUser) => {
+    try {
+        const checkUserAndDelete = await UserModel.findByIdAndDelete(idUser);
+
+        return checkUserAndDelete;
+    } catch (error) {
+        return error.message;
     }
 }
 
@@ -60,5 +74,6 @@ export {
     getAllUsers,
     getOneUser,
     createNewUser,
-    updateOneUser
+    updateOneUser,
+    deleteOneUser
 }

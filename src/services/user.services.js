@@ -1,38 +1,80 @@
 import * as User from "../database/User.database"
+import { comparePassword, encryptPassword } from "../utils/hash.handle";
 
 // GET ALL USERS
 const getAllUsers = async () => {
-    const allUsers = await User.getAllUsers();
+    try {
+        const allUsers = await User.getAllUsers();
 
-    return allUsers;
-
+        return allUsers;
+    } catch (error) {
+        return error.message
+    }
 };
 
 // GET ONE USER
 const getOneUser = async (id) => {
 
-    const getUser = await User.getOneUser(id);
+    try {
+        const user = await User.getOneUser(id);
 
-    return getUser;
+        return user;
+    } catch (error) {
+        return error.message
+    }
 }
 
 // CREATE NEW USER
-const createNewUser = async (reqBody, password) => {
-    const createdUser = await User.createNewUser(reqBody, password);
+const createNewUser = async (reqBody) => {
+    try {
+        const createdUser = await User.createNewUser(reqBody);
 
-    return createdUser;
+        return createdUser;
+    } catch (error) {
+        return error.message
+    }
 }
 
 // UPDATE ONE USER
 const updateOneUser = async (user, idUser) => {
 
-    const updatedUser = await User.updateOneUser(user, idUser);
+    try {
 
-    return updatedUser;
+        // CHECK USER IF EXISTS
+        const userIndDb = await User.getOneUser(idUser);
+
+        if (!userIndDb) return "USER_NOT_FOUND";
+
+        const verifyPasswords = userIndDb && user.password ? await comparePassword(user.password, userIndDb.password) : null;
+
+        if (verifyPasswords) {
+            return "THE_PASSWORD_MUST_BE_DIFFERENTE_FROM_THE_PREVIOUS_ONE."
+        }
+
+        if (user.password) user.password = await encryptPassword(user.password, 10);
+
+        const updatedUser = await User.updateOneUser(user, idUser);
+
+        return updatedUser;
+
+    } catch (error) {
+        console.log(error)
+        return error.message
+    }
 }
 
 // DELETE ONE USER
-const deleteOneUser = async () => { return; }
+const deleteOneUser = async (idUser) => { 
+    try {
+        const deletedUser = await User.deleteOneUser(idUser);
+
+        if(!deletedUser) return "USER_NOT_FOUND";
+
+        return deletedUser;
+    } catch (error) {
+        return error.message;
+    }
+}
 
 
 export {
