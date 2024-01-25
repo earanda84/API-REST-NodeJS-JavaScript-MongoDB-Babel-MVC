@@ -17,9 +17,18 @@ const getAllUsers = async () => {
 }
 
 // GET ONE USER
-const getOneUser = async (id) => {
+const getOneUser = async (id, email) => {
+    if(!id && !email){
+        throw new Error("ALMOST_ONE_PARAMETER_IS_REQUIRED_ID_OR_EMAIL.")
+    }
     try {
-        return await UserModel.findOne({ _id: id });
+        const query = id ? { _id: id } : email ? { email: email } : null;
+
+        if(id && email){
+            throw new Error("ONLY_ONE_PARAMETER_IT'S_REQUIRED_ID_OR_EMAIL.")
+        }
+        
+        return await UserModel.findOne(query);
     } catch (error) {
         return error.message
     }
@@ -32,7 +41,7 @@ const createNewUser = async (user) => {
         // CHECK IF USER EXISTS
         const checkUserInDb = await UserModel.findOne({ email: user.email });
 
-        if (checkUserInDb) return "USER_ALREADY_EXISTS";
+        if (checkUserInDb) return { error: "USER_ALREADY_EXISTS" };
 
         // HASH PASSWORD
         const hashPassword = await encryptPassword(user.password);
@@ -59,7 +68,7 @@ const updateOneUser = async (reqBody, idUser) => {
 }
 
 // DELETED USER
-const deleteOneUser = async(idUser) => {
+const deleteOneUser = async (idUser) => {
     try {
         const checkUserAndDelete = await UserModel.findByIdAndDelete(idUser);
 

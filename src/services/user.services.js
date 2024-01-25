@@ -1,4 +1,4 @@
-import * as User from "../database/User.database"
+import * as userData from "../database/User.database"
 import { comparePassword, encryptPassword } from "../utils/hash.handle";
 import { generateToken } from "../utils/jwt.handle";
 
@@ -9,7 +9,7 @@ import { sendMailer } from "../utils/sendmail.handle";
 // GET ALL USERS
 const getAllUsers = async () => {
     try {
-        const allUsers = await User.getAllUsers();
+        const allUsers = await userData.getAllUsers();
 
         return allUsers;
     } catch (error) {
@@ -21,7 +21,7 @@ const getAllUsers = async () => {
 const getOneUser = async (id) => {
 
     try {
-        const user = await User.getOneUser(id);
+        const user = await userData.getOneUser(id, null);
 
         return user;
     } catch (error) {
@@ -31,17 +31,32 @@ const getOneUser = async (id) => {
 
 // CREATE NEW USER
 const createNewUser = async (reqBody) => {
-    try {
-        const createdUser = await User.createNewUser(reqBody);
 
-        if (createdUser !== "USER_ALREADY_EXISTS") {
-            // GENERATE TOKEN REGISTER VALIDATE IDENTITY
-            const token = generateToken(createdUser._id);
-            // SENT MAIL
-            await sendMailer(reqBody.email, reqBody.name, reqBody.lastname, token)
+    try {
+        // CALLING CREATE USER FROM USERDATA
+        const createdUser = await userData.createNewUser(reqBody);
+
+        // RESPONSE IF USER EXISTS
+        if (createdUser.error) return createdUser.error;
+
+        // GENERATE TOKEN
+        const payload = {
+            id: createdUser._id,
+            email: createdUser.email
         }
 
-        return createdUser;
+        const token = generateToken(payload);
+
+        // SEND EMAIL VALIDATE REGISTER
+        const sendMail = await sendMailer(createdUser.email, createdUser.name, createdUser.lastname, token);
+
+        // RESPONSE WITH EMAIL SENDING TOKEN TO VALIDATE REGISTER
+        const response = {
+            createdUser,
+            sendMail
+        }
+
+        return response;
     } catch (error) {
         return error.message
     }
@@ -53,7 +68,7 @@ const updateOneUser = async (user, idUser) => {
     try {
 
         // CHECK USER IF EXISTS
-        const userIndDb = await User.getOneUser(idUser);
+        const userIndDb = await userData.getOneUser(idUser);
 
         if (!userIndDb) return "USER_NOT_FOUND";
 
@@ -78,7 +93,7 @@ const updateOneUser = async (user, idUser) => {
 // DELETE ONE USER
 const deleteOneUser = async (idUser) => {
     try {
-        const deletedUser = await User.deleteOneUser(idUser);
+        const deletedUser = await userData.deleteOneUser(idUser);
 
         if (!deletedUser) return "USER_NOT_FOUND";
 

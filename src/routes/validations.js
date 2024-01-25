@@ -6,6 +6,7 @@ const router = Router();
 import * as validateIdentityController from "../controllers/validate.user.controllers"
 
 router.get('/:token', validateIdentityController.validateRegisterIdentity);
+router.post('/resend', validateIdentityController.resendToken)
 // Pendiente, ya que se tiene que enviar el emial para poder validar al usuario y reenviar un token
 // router.post("/:idUser")
 

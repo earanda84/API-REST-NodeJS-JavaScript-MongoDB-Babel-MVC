@@ -30,11 +30,20 @@ const sendMailer = async (email, name, lastname, token) => {
         console.log(info)
         if (info.rejected.length > 1) {
             console.log(`Error to send email to: ${email}.`)
+            return {
+                error_sent_mail: info.rejected,
+            }
         } else {
             console.log(`Email sent succesfully to: ${email}. `)
+            return {
+                status: "ok",
+                mail_to_accepted: info.accepted,
+                mail_sent_id: info.messageId.split("<")[1].split("@").shift()
+            };
         }
     } catch (error) {
         console.log(error)
+        return error;
     }
 };
 

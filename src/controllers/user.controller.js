@@ -40,6 +40,7 @@ const getOneUser = async (req, res) => {
 const createNewUser = async (req, res) => {
     try {
 
+        // CREATE NEW USER
         const createdUser = await userService.createNewUser(req.body);
 
         res.send({
