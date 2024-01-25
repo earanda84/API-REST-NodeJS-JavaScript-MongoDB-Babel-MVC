@@ -1,5 +1,6 @@
 import * as User from "../database/User.database"
 import { comparePassword, encryptPassword } from "../utils/hash.handle";
+import { generateToken } from "../utils/jwt.handle";
 
 // IMPORT SEND MAILER
 import { sendMailer } from "../utils/sendmail.handle";
@@ -34,8 +35,10 @@ const createNewUser = async (reqBody) => {
         const createdUser = await User.createNewUser(reqBody);
 
         if (createdUser !== "USER_ALREADY_EXISTS") {
+            // GENERATE TOKEN REGISTER VALIDATE IDENTITY
+            const token = generateToken(createdUser._id);
             // SENT MAIL
-            await sendMailer(reqBody.email, reqBody.name, reqBody.lastname)
+            await sendMailer(reqBody.email, reqBody.name, reqBody.lastname, token)
         }
 
         return createdUser;

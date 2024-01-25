@@ -1,22 +1,22 @@
 import transporter from "../config/mailer.config";
 
 // HTML CONTENT
-const html = (name, lastname) => {
+const html = (name, lastname, token) => {
     return `
     <div>
         <h1>${name.toUpperCase()} ${lastname.toUpperCase()} - Te haz registrado exitosamente.</h1>
         <br/>
         <div>
-            <p>Gracias por registrarte en nuestra aplicación. Por favor, haz clic en el siguiente enlace para validar tu registro: <a href="${process.env.VALIDATION_LINK}/validations" >Validar registro</a> </p>
+            <p>Gracias por registrarte en nuestra aplicación. Por favor, haz clic en el siguiente enlace para validar tu registro: <a href="${process.env.VALIDATION_LINK}/validations/${token}">Validar registro</a> </p>
         </div>
     </div>
 `;
 };
 
 
-const sendMailer = async (email, name, lastname) => {
+const sendMailer = async (email, name, lastname, token) => {
 
-    const htmlContent = html(name, lastname);
+    const htmlContent = html(name, lastname, token);
 
     try {
         console.log(email)
