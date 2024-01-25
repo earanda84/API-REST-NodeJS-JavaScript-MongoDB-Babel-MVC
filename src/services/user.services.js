@@ -1,6 +1,10 @@
 import * as User from "../database/User.database"
 import { comparePassword, encryptPassword } from "../utils/hash.handle";
 
+// IMPORT SEND MAILER
+import { sendMailer } from "../utils/sendmail.handle";
+
+
 // GET ALL USERS
 const getAllUsers = async () => {
     try {
@@ -28,6 +32,11 @@ const getOneUser = async (id) => {
 const createNewUser = async (reqBody) => {
     try {
         const createdUser = await User.createNewUser(reqBody);
+
+        if (createdUser !== "USER_ALREADY_EXISTS") {
+            // SENT MAIL
+            await sendMailer(reqBody.email, reqBody.name, reqBody.lastname)
+        }
 
         return createdUser;
     } catch (error) {
@@ -64,11 +73,11 @@ const updateOneUser = async (user, idUser) => {
 }
 
 // DELETE ONE USER
-const deleteOneUser = async (idUser) => { 
+const deleteOneUser = async (idUser) => {
     try {
         const deletedUser = await User.deleteOneUser(idUser);
 
-        if(!deletedUser) return "USER_NOT_FOUND";
+        if (!deletedUser) return "USER_NOT_FOUND";
 
         return deletedUser;
     } catch (error) {
