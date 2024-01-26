@@ -1,28 +1,28 @@
 import { Schema, model } from "mongoose";
 
-const UserSchema = new Schema({
+const ProviderSchema = new Schema({
     name: {
         type: String,
         required: true,
-        trim: true,
+        trim: true
     },
     lastname: {
         type: String,
         required: true,
         trim: true,
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
     password: {
         type: String,
         required: true,
-        trim: true,
+        trim: true
     },
-    phoneNumber:{
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true
+    },
+    phoneNumber: {
         type: String,
         required: true,
         trim: true,
@@ -30,13 +30,13 @@ const UserSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "user", "invitado"],
+        enum: ["proveedor", "invitado"],
         default: "invitado"
     }
 }, {
     timestamps: true,
 });
 
-const UserModel = model("users", UserSchema);
+const ProviderModel = model("provider", ProviderSchema);
 
-export default UserModel;
+export default ProviderModel;
