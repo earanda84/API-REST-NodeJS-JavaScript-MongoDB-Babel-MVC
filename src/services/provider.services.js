@@ -3,6 +3,9 @@ import * as providerData from "../database/Provider.database";
 
 // CREAR UN NUEVO PROVEEDOR
 const createNewProvider = async (provider) => {
+    if(!provider){
+        return "PROVIDER_DATA_NOT_SUPPLIED"
+    }
     try {
         const newProvider = await providerData.createNewProvider(provider);
 

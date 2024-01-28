@@ -2,9 +2,6 @@ import ProviderModel from "../models/Provider.model";
 
 // CREAR UN NUEVO PROVEEDOR
 const createNewProvider = async(provider) => {
-    if(!provider){
-        return "PROVIDER_DATA_NOT_SUPPLIED"
-    }
 
     try {
         const newProvider = await ProviderModel.create(provider);
